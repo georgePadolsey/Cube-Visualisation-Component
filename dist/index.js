@@ -34168,7 +34168,7 @@ else {
 
 }).call(this);
 
-},{"three":"../node_modules/three/build/three.module.js"}],"../node_modules/base64-js/index.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js"}],"../../../.config/yarn/global/node_modules/base64-js/index.js":[function(require,module,exports) {
 'use strict'
 
 exports.byteLength = byteLength
@@ -34321,7 +34321,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],"../node_modules/ieee754/index.js":[function(require,module,exports) {
+},{}],"../../../.config/yarn/global/node_modules/ieee754/index.js":[function(require,module,exports) {
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -34407,14 +34407,14 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],"../node_modules/isarray/index.js":[function(require,module,exports) {
+},{}],"../../../.config/yarn/global/node_modules/isarray/index.js":[function(require,module,exports) {
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],"../node_modules/buffer/index.js":[function(require,module,exports) {
+},{}],"../../../.config/yarn/global/node_modules/buffer/index.js":[function(require,module,exports) {
 
 var global = arguments[3];
 /*!
@@ -36207,7 +36207,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":"../node_modules/base64-js/index.js","ieee754":"../node_modules/ieee754/index.js","isarray":"../node_modules/isarray/index.js","buffer":"../node_modules/buffer/index.js"}],"../node_modules/lodash/lodash.js":[function(require,module,exports) {
+},{"base64-js":"../../../.config/yarn/global/node_modules/base64-js/index.js","ieee754":"../../../.config/yarn/global/node_modules/ieee754/index.js","isarray":"../../../.config/yarn/global/node_modules/isarray/index.js","buffer":"../../../.config/yarn/global/node_modules/buffer/index.js"}],"../node_modules/lodash/lodash.js":[function(require,module,exports) {
 var global = arguments[3];
 var Buffer = require("buffer").Buffer;
 var define;
@@ -53319,7 +53319,7 @@ var define;
   }
 }.call(this));
 
-},{"buffer":"../node_modules/buffer/index.js"}],"utils/WebGL.ts":[function(require,module,exports) {
+},{"buffer":"../../../.config/yarn/global/node_modules/buffer/index.js"}],"utils/WebGL.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53407,7 +53407,101 @@ function iterateCube(expr, dims) {
     }
   }
 }
-},{}],"CubeVisualizer.ts":[function(require,module,exports) {
+},{}],"SphereBuilder.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var T = _interopRequireWildcard(require("three"));
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var SphereBuilder =
+/*#__PURE__*/
+function () {
+  function SphereBuilder() {
+    _classCallCheck(this, SphereBuilder);
+
+    this.position = new T.Vector3();
+    this.opacity = 1;
+  }
+
+  _createClass(SphereBuilder, [{
+    key: "withX",
+    value: function withX(x) {
+      this.position.x = x;
+      return this;
+    }
+  }, {
+    key: "withY",
+    value: function withY(y) {
+      this.position.y = y;
+      return this;
+    }
+  }, {
+    key: "withZ",
+    value: function withZ(z) {
+      this.position.z = z;
+      return this;
+    }
+  }, {
+    key: "withRadius",
+    value: function withRadius(radius) {
+      this.radius = radius;
+      return this;
+    }
+  }, {
+    key: "withColor",
+    value: function withColor(color) {
+      this.color = color;
+      return this;
+    }
+  }, {
+    key: "withEdges",
+    value: function withEdges(edges) {
+      this.edges = edges;
+      return this;
+    }
+  }, {
+    key: "withOpacity",
+    value: function withOpacity(opacity) {
+      this.opacity = opacity;
+      return this;
+    }
+  }, {
+    key: "build",
+    value: function build() {
+      try {
+        var geometry = new T.SphereGeometry(this.radius, this.edges, this.edges);
+        var material = new T.MeshStandardMaterial({
+          color: this.color,
+          transparent: true,
+          opacity: 0.6
+        });
+        var sphere = new T.Mesh(geometry, material);
+        sphere.position = this.position;
+        return sphere;
+      } catch (e) {
+        throw new Error('Undefined builder value: ' + e);
+      }
+    }
+  }]);
+
+  return SphereBuilder;
+}();
+
+var _default = SphereBuilder;
+exports.default = _default;
+},{"three":"../node_modules/three/build/three.module.js"}],"CubeVisualizer.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53426,6 +53520,8 @@ var _lodash = require("lodash");
 var _WebGL = _interopRequireDefault(require("./utils/WebGL"));
 
 var _DIterator = require("./utils/3DIterator");
+
+var _SphereBuilder = _interopRequireDefault(require("~SphereBuilder"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -53639,17 +53735,7 @@ function () {
        * with colours depending on their position
        */
       (0, _DIterator.iterateCube)(function (x, y, z) {
-        var geometry = new T.SphereGeometry(_this.config.sphereRadius, 8, 8);
-        var nonActiveColor = new T.Color("hsl(".concat((x + y + z) / (_this.config.cubeSize * 3) * 360, ", 75%, 50%)"));
-        var material = new T.MeshStandardMaterial({
-          color: nonActiveColor,
-          transparent: true,
-          opacity: 0.6
-        });
-        var sphere = new T.Mesh(geometry, material);
-        sphere.position.x = _this.config.sphereRadius + _this.config.sphereRadius * 2 * _this.config.sphereGap * x;
-        sphere.position.y = _this.config.sphereRadius + _this.config.sphereRadius * 2 * _this.config.sphereGap * y;
-        sphere.position.z = _this.config.sphereRadius + _this.config.sphereRadius * 2 * _this.config.sphereGap * z;
+        var sphere = new _SphereBuilder.default().withX(_this.config.sphereRadius * (1 + 2 * _this.config.sphereGap * x)).withY(_this.config.sphereRadius * (1 + 2 * _this.config.sphereGap * y)).withZ(_this.config.sphereRadius * (1 + 2 * _this.config.sphereGap * z)).withColor(new T.Color().setHSL((x + y + z) / (_this.config.cubeSize * 3), 0.75, 0.5)).withRadius(_this.config.sphereRadius).withEdges(8).build();
 
         _this.renderedSpheres.push(sphere);
 
@@ -53678,7 +53764,7 @@ function () {
 
       (0, _DIterator.iterateCube)(function (x, y, z) {
         var curSphere = _this2.renderedSpheres[i++];
-        curSphere.material.color.set(new T.Color("hsl(".concat(x * y * z / Math.pow(_this2.config.cubeSize, 3) * 360, ", 75%, 50%)")));
+        curSphere.material.color.set(new T.Color("hsl(".concat(x * y * z / Math.pow(_this2.config.cubeSize, 3) * 360, ", 75 %, 50 %)")));
         curSphere.material.opacity = 0.6;
         curSphere.material.transparent = true;
       }, this.config.cubeSize); // modifier to slow down the update speed!
@@ -53714,7 +53800,7 @@ function () {
           geometry[d * 3 + 1] = y;
           geometry[d * 3 + 2] = z;
           var relevantSphere = this.renderedSpheres[Math.pow(this.config.cubeSize, 2) * vertexCoords[0] + vertexCoords[1] * this.config.cubeSize + vertexCoords[2]];
-          relevantSphere.material.color.set(new T.Color("hsl(".concat(vertexCoords[0] * vertexCoords[1] * vertexCoords[2] / Math.pow(this.config.cubeSize, 3) * 360, ", 100%, 50%)")));
+          relevantSphere.material.color.set(new T.Color("hsl(".concat(vertexCoords[0] * vertexCoords[1] * vertexCoords[2] / Math.pow(this.config.cubeSize, 3) * 360, ", 100%, 50 %)")));
           relevantSphere.material.opacity = 1;
           relevantSphere.material.transparent = false;
         }
@@ -53732,7 +53818,7 @@ function () {
             sizeAttenuation: !false,
             near: this.camera.near,
             far: this.camera.far,
-            color: new T.Color("hsl(".concat(i / this.lineEmitters.length * 360, ", 100%, 50%)")),
+            color: new T.Color("hsl(".concat(i / this.lineEmitters.length * 360, ", 100 %, 50 %)")),
             resolution: new T.Vector2(this.width, this.height)
           });
           var mesh = new T.Mesh(line.geometry, material);
@@ -53799,7 +53885,7 @@ function () {
 }();
 
 exports.CubeVisualizer = CubeVisualizer;
-},{"./utils/sineF":"utils/sineF.ts","three":"../node_modules/three/build/three.module.js","three.meshline":"../node_modules/three.meshline/src/THREE.MeshLine.js","lodash":"../node_modules/lodash/lodash.js","./utils/WebGL":"utils/WebGL.ts","./utils/3DIterator":"utils/3DIterator.ts"}],"index.ts":[function(require,module,exports) {
+},{"./utils/sineF":"utils/sineF.ts","three":"../node_modules/three/build/three.module.js","three.meshline":"../node_modules/three.meshline/src/THREE.MeshLine.js","lodash":"../node_modules/lodash/lodash.js","./utils/WebGL":"utils/WebGL.ts","./utils/3DIterator":"utils/3DIterator.ts","~SphereBuilder":"SphereBuilder.ts"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53813,7 +53899,7 @@ Object.defineProperty(exports, "Container", {
 });
 
 var _CubeVisualizer = require("./CubeVisualizer");
-},{"./CubeVisualizer":"CubeVisualizer.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./CubeVisualizer":"CubeVisualizer.ts"}],"../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -53841,7 +53927,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50606" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49612" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -54016,5 +54102,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.ts"], "CubeVisualizer")
+},{}]},{},["../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.ts"], "CubeVisualizer")
 //# sourceMappingURL=/index.js.map

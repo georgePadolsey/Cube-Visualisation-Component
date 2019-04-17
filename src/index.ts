@@ -1,4 +1,4 @@
 
-import { CubeVisualizer as Container } from './CubeVisualizer';
+import {CubeVisualizer as Container} from './CubeVisualizer';
 
-export { Container };
+export {Container};

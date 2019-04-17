@@ -1196,6 +1196,11 @@ buffer@^4.3.0:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
+builder-pattern@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/builder-pattern/-/builder-pattern-1.2.0.tgz#258716e1e7915e9f4e597b714e35bb86e05dfce9"
+  integrity sha512-2E+p+lNCtnXWvXKBYV/xSMG37i82LynLvT/7HgyCWxY7FZ/JqElDD9jwQeLs6w6qWUnAyIarAXcFTsYMgMdMsg==
+
 builtin-status-codes@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
