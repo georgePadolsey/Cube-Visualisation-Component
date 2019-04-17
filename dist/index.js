@@ -53431,6 +53431,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -53473,9 +53481,20 @@ function () {
 
     _classCallCheck(this, CubeVisualizer);
 
-    this._config = DefaultCubeVisualizerConfig;
+    /** Config */
+    this._config = DefaultCubeVisualizerConfig; // frame counter for update function
+
     this.frame = 0;
+    /**
+     * functions which emit the x,y,z verticies of the line
+     *  from a displacement value(x) and time value(t)
+    */
+
     this.lineEmitters = [];
+    /**
+     * Rendered objects
+     */
+
     this.renderedLines = [];
     this.renderedSpheres = [];
     this.container = container; // bypass set dimensions
@@ -53496,9 +53515,17 @@ function () {
 
   _createClass(CubeVisualizer, [{
     key: "updateConfig",
+
+    /**
+     * Update calculated value of cubeLength
+     */
     value: function updateConfig() {
       this.cubeLength = 2 * this.config.sphereRadius * (this.config.sphereGap * (this.config.cubeSize - 1) + 1);
     }
+    /**
+     * Setup the entire scene, including camera, lights, spheres / lines.
+     */
+
   }, {
     key: "setupScene",
     value: function setupScene() {
@@ -53538,9 +53565,14 @@ function () {
       this.buildLines();
       this.startRender();
     }
+    /**
+     * Randomly generate numbers for the line parameters
+     */
+
   }, {
     key: "buildLines",
     value: function buildLines() {
+      // randomly generate a matrix of dimension (dims) with values between -1 -> 1 (float)
       var randIdent = function randIdent(dims) {
         return Array(dims).fill(0).map(function (x) {
           return (0, _lodash.random)(-1, 1, true);
@@ -53552,40 +53584,60 @@ function () {
         this.lineEmitters.push((0, _sineF.sineEmitMaker)(this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3)));
       }
     }
+    /**
+     * Build the camera and attach it to the scene
+     * Setup a temporarily position and point it at the middle of the cube
+     */
+
   }, {
     key: "buildCamera",
     value: function buildCamera() {
-      var aspectRatio = this.width / this.height;
-      this.camera = new T.PerspectiveCamera(60, aspectRatio, 0.1, 2000);
+      var aspectRatio = this.width / this.height; // basic camera setup
+
+      this.camera = new T.PerspectiveCamera(60, aspectRatio, 0.1, 2000); // temp positioning (will be update quickly in update function)
+
       this.camera.position.x = -100;
       this.camera.position.y = this.cubeLength / 2;
-      this.camera.position.z = -100;
+      this.camera.position.z = -100; // look at middle of cube
+
       this.camera.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
     }
+    /**
+     * Setup ambient light as well as a spot light
+     */
+
   }, {
     key: "buildLights",
     value: function buildLights() {
       var light = new T.AmbientLight(0x404040); // soft white light
 
       this.scene.add(light);
-      this.spotlight = new T.SpotLight('#fff', 1);
-      this.spotlight.position.x = -this.cubeLength;
-      this.spotlight.position.z = -this.cubeLength;
-      this.spotlight.position.y = this.cubeLength / 2;
-      this.spotlight.angle = 0.3;
-      this.spotlight.decay = 0.5;
-      this.spotlight.penumbra = 1;
-      this.spotlight.shadow.camera.near = 10;
-      this.spotlight.shadow.camera.far = 1000;
-      this.spotlight.shadow.camera.fov = 30;
-      this.spotlight.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
-      this.scene.add(this.spotlight);
+      var spotlight = new T.SpotLight('#fff', 1);
+      spotlight.position.x = -this.cubeLength;
+      spotlight.position.z = -this.cubeLength;
+      spotlight.position.y = this.cubeLength / 2;
+      spotlight.angle = 0.3;
+      spotlight.decay = 0.5;
+      spotlight.penumbra = 1;
+      spotlight.shadow.camera.near = 10;
+      spotlight.shadow.camera.far = 1000;
+      spotlight.shadow.camera.fov = 30;
+      spotlight.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
+      this.scene.add(spotlight);
+      /**
+       * Note these lights are `not` stored in the class as instance variables
+       * This is because they are not needed anywhere else!
+       * */
     }
   }, {
     key: "buildSpheres",
     value: function buildSpheres() {
       var _this = this;
 
+      /**
+       * iterate over the entire cube coordinates (integers) and create spheres
+       * with colours depending on their position
+       */
       (0, _DIterator.iterateCube)(function (x, y, z) {
         var geometry = new T.SphereGeometry(_this.config.sphereRadius, 8, 8);
         var nonActiveColor = new T.Color("hsl(".concat((x + y + z) / (_this.config.cubeSize * 3) * 360, ", 75%, 50%)"));
@@ -53607,6 +53659,11 @@ function () {
   }, {
     key: "startRender",
     value: function startRender() {
+      /**
+       * Update function is decoupled from render animation.
+       * This is as we want the speed of the visualization to be generally consistent
+       * between computers. No matter how fast the computers graphics are.
+       */
       requestAnimationFrame(this.boundRender);
       this.interval = setInterval(this.boundUpdate, 1000 / 60);
     }
@@ -53617,42 +53674,47 @@ function () {
 
       this.frame++;
       var f = this.frame;
-      var i = 0;
-      (0, _DIterator.iterateCube)(function (x, y, z) {
-        _this2.renderedSpheres[i].material.color.set(new T.Color("hsl(".concat(x * y * z / Math.pow(_this2.config.cubeSize, 3) * 360, ", 75%, 50%)")));
+      var i = 0; // reset all spheres (particurly those that have been changed) back to default color / opacity/ transparency
 
-        _this2.renderedSpheres[i].material.opacity = 0.6;
-        _this2.renderedSpheres[i].material.transparent = true;
-        i++;
-      }, this.config.cubeSize);
+      (0, _DIterator.iterateCube)(function (x, y, z) {
+        var curSphere = _this2.renderedSpheres[i++];
+        curSphere.material.color.set(new T.Color("hsl(".concat(x * y * z / Math.pow(_this2.config.cubeSize, 3) * 360, ", 75%, 50%)")));
+        curSphere.material.opacity = 0.6;
+        curSphere.material.transparent = true;
+      }, this.config.cubeSize); // modifier to slow down the update speed!
+
       var frameMod = 1 / 500;
       this.camera.position.x = (this.cubeLength + this.config.sphereRadius * this.config.sphereGap * 20) * Math.sin(f * frameMod) + this.cubeLength / 2;
       this.camera.position.y = this.cubeLength / 2;
       this.camera.position.z = (this.cubeLength + this.config.sphereRadius * this.config.sphereGap * 20) * Math.cos(f * frameMod) + this.cubeLength / 2;
-      this.camera.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
+      this.camera.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2)); // Generate the vertices of the line using the line functions we have from earlier
+      // see this.lineEmitters
 
       for (var i = 0; i < this.lineEmitters.length; i++) {
         var lineExpr = this.lineEmitters[i];
-        var color = new T.Color("hsl(".concat(i / this.lineEmitters.length * 360, ", 100%, 50%)"));
         var geometry = new Float32Array(this.config.cubeSize * 3);
-        var lastGeo;
 
-        for (var x = 0; x < this.config.cubeSize; x++) {
-          var exprV = lineExpr(x, f * frameMod * 2);
-          exprV = exprV.map(function (x) {
+        for (var d = 0; d < this.config.cubeSize; d++) {
+          var vertexCoords = lineExpr(d, f * frameMod * 2);
+          vertexCoords = vertexCoords.map(function (x) {
             return x / 2 + (_this2.config.cubeSize - 2) / 2 + 1 | 0;
           });
-          var exprG = exprV.map(function (x) {
+
+          var _vertexCoords$map$map = vertexCoords.map(function (x) {
             return _this2.config.sphereGap * 2 * x + 1;
-          });
-          var exprRad = exprG.map(function (x) {
+          }).map(function (x) {
             return x * _this2.config.sphereRadius;
-          });
-          geometry[x * 3] = exprRad[0];
-          geometry[x * 3 + 1] = exprRad[1];
-          geometry[x * 3 + 2] = exprRad[2];
-          var relevantSphere = this.renderedSpheres[Math.pow(this.config.cubeSize, 2) * exprV[0] + exprV[1] * this.config.cubeSize + exprV[2]];
-          relevantSphere.material.color.set(new T.Color("hsl(".concat(exprV[0] * exprV[1] * exprV[2] / Math.pow(this.config.cubeSize, 3) * 360, ", 100%, 50%)")));
+          }),
+              _vertexCoords$map$map2 = _slicedToArray(_vertexCoords$map$map, 3),
+              x = _vertexCoords$map$map2[0],
+              y = _vertexCoords$map$map2[1],
+              z = _vertexCoords$map$map2[2];
+
+          geometry[d * 3] = x;
+          geometry[d * 3 + 1] = y;
+          geometry[d * 3 + 2] = z;
+          var relevantSphere = this.renderedSpheres[Math.pow(this.config.cubeSize, 2) * vertexCoords[0] + vertexCoords[1] * this.config.cubeSize + vertexCoords[2]];
+          relevantSphere.material.color.set(new T.Color("hsl(".concat(vertexCoords[0] * vertexCoords[1] * vertexCoords[2] / Math.pow(this.config.cubeSize, 3) * 360, ", 100%, 50%)")));
           relevantSphere.material.opacity = 1;
           relevantSphere.material.transparent = false;
         }
@@ -53660,7 +53722,8 @@ function () {
         var line = new _three2.MeshLine();
         line.setGeometry(geometry, function (p) {
           return _this2.config.sphereRadius / 2;
-        });
+        }); // if there are already enough lines
+        // just change the geometry of an already available line (more performant)
 
         if (i > this.renderedLines.length - 1) {
           var material = new _three2.MeshLineMaterial({
@@ -53669,14 +53732,14 @@ function () {
             sizeAttenuation: !false,
             near: this.camera.near,
             far: this.camera.far,
-            color: color,
+            color: new T.Color("hsl(".concat(i / this.lineEmitters.length * 360, ", 100%, 50%)")),
             resolution: new T.Vector2(this.width, this.height)
           });
           var mesh = new T.Mesh(line.geometry, material);
-          this.renderedLines.push(mesh); // console.log('added')
-
+          this.renderedLines.push(mesh);
           this.scene.add(mesh);
         } else {
+          // REMEMBER GC! 
           this.renderedLines[i].geometry.dispose();
           this.renderedLines[i].geometry = line.geometry;
         }
@@ -53697,7 +53760,6 @@ function () {
   }, {
     key: "render",
     value: function render() {
-      this.update();
       this.renderer.clear();
       this.renderer.render(this.scene, this.camera);
       requestAnimationFrame(this.boundRender);
@@ -53711,6 +53773,8 @@ function () {
     get: function get() {
       return this._config;
     }
+    /** Dimensions */
+
   }, {
     key: "width",
     set: function set(width) {

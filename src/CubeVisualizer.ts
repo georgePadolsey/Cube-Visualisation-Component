@@ -36,8 +36,11 @@ export class CubeVisualizer {
     camera: T.PerspectiveCamera;
     renderer: T.WebGLRenderer;
 
-    spotlight: T.SpotLight;
+
+
+    /** Config */
     _config: CubeVisualizerConfig = DefaultCubeVisualizerConfig;
+
     set config(config: CubeVisualizerConfig) {
         this._config = config;
         this.updateConfig();
@@ -45,26 +48,43 @@ export class CubeVisualizer {
     get config(): CubeVisualizerConfig {
         return this._config;
     }
+
+    // frame counter for update function
     frame: number = 0;
 
+    /** 
+     * functions which emit the x,y,z verticies of the line
+     *  from a displacement value(x) and time value(t)
+    */
     lineEmitters: ((x: number, t: number) => number[])[] = [];
+
+    /**
+     * Rendered objects
+     */
     renderedLines: any = [];
     renderedSpheres: any = [];
 
+
+    /** Dimensions */
     set width(width: number) {
         this._width = width;
         this.updateDimensions();
     }
     get width() { return this._width };
+
     set height(height: number) {
         this._height = height;
         this.updateDimensions();
     }
-
     get height() { return this._height };
+
     _height: number;
     _width: number;
+
+    // container where the visualizer is contained
     container: HTMLElement;
+
+    /** The setInterval id for the update function */
     interval?: number;
 
     /**
@@ -111,10 +131,16 @@ export class CubeVisualizer {
 
     }
 
+    /**
+     * Update calculated value of cubeLength
+     */
     private updateConfig() {
         this.cubeLength = 2 * this.config.sphereRadius * (this.config.sphereGap * (this.config.cubeSize - 1) + 1);
     }
 
+    /**
+     * Setup the entire scene, including camera, lights, spheres / lines.
+     */
     private setupScene() {
         this.scene = new T.Scene();
 
@@ -156,8 +182,13 @@ export class CubeVisualizer {
         this.startRender();
     }
 
+    /**
+     * Randomly generate numbers for the line parameters
+     */
     private buildLines() {
 
+
+        // randomly generate a matrix of dimension (dims) with values between -1 -> 1 (float)
         const randIdent = (dims: number) => Array(dims).fill(0).map(x => random(-1, 1, true))
 
         for (var i = 0; i < this.config.numberOfLines; i++) {
@@ -169,41 +200,60 @@ export class CubeVisualizer {
         }
     }
 
+    /**
+     * Build the camera and attach it to the scene
+     * Setup a temporarily position and point it at the middle of the cube
+     */
     private buildCamera() {
         let aspectRatio = this.width / this.height;
+
+        // basic camera setup
         this.camera = new T.PerspectiveCamera(60, aspectRatio, 0.1, 2000);
 
-
+        // temp positioning (will be update quickly in update function)
         this.camera.position.x = -100;
         this.camera.position.y = this.cubeLength / 2
         this.camera.position.z = -100;
+
+        // look at middle of cube
         this.camera.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
     }
 
+    /**
+     * Setup ambient light as well as a spot light
+     */
     private buildLights() {
         var light = new T.AmbientLight(0x404040); // soft white light
         this.scene.add(light);
 
 
-        this.spotlight = new T.SpotLight('#fff', 1);
-        this.spotlight.position.x = -this.cubeLength;
-        this.spotlight.position.z = -this.cubeLength;
-        this.spotlight.position.y = this.cubeLength / 2;
+        let spotlight = new T.SpotLight('#fff', 1);
+        spotlight.position.x = -this.cubeLength;
+        spotlight.position.z = -this.cubeLength;
+        spotlight.position.y = this.cubeLength / 2;
 
-        this.spotlight.angle = 0.3;
-        this.spotlight.decay = 0.5;
-        this.spotlight.penumbra = 1;
-        this.spotlight.shadow.camera.near = 10;
-        this.spotlight.shadow.camera.far = 1000;
-        this.spotlight.shadow.camera.fov = 30;
+        spotlight.angle = 0.3;
+        spotlight.decay = 0.5;
+        spotlight.penumbra = 1;
+        spotlight.shadow.camera.near = 10;
+        spotlight.shadow.camera.far = 1000;
+        spotlight.shadow.camera.fov = 30;
 
 
-        this.spotlight.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
-        this.scene.add(this.spotlight);
+        spotlight.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
+        this.scene.add(spotlight);
+
+        /** 
+         * Note these lights are `not` stored in the class as instance variables
+         * This is because they are not needed anywhere else!
+         * */
     }
 
     private buildSpheres() {
-
+        /**
+         * iterate over the entire cube coordinates (integers) and create spheres
+         * with colours depending on their position
+         */
         iterateCube((x, y, z) => {
             let geometry = new T.SphereGeometry(this.config.sphereRadius, 8, 8);
             var nonActiveColor = new T.Color(`hsl(${(x + y + z) / (this.config.cubeSize * 3) * 360}, 75%, 50%)`);
@@ -219,6 +269,12 @@ export class CubeVisualizer {
     }
 
     private startRender() {
+
+        /**
+         * Update function is decoupled from render animation.
+         * This is as we want the speed of the visualization to be generally consistent
+         * between computers. No matter how fast the computers graphics are.
+         */
         requestAnimationFrame(this.boundRender);
         this.interval = setInterval(this.boundUpdate, 1000 / 60);
     }
@@ -228,16 +284,19 @@ export class CubeVisualizer {
         let f = this.frame;
 
         var i = 0;
+
+        // reset all spheres (particurly those that have been changed) back to default color / opacity/ transparency
         iterateCube((x, y, z) => {
-            this.renderedSpheres[i].material.color.set(new T.Color(`hsl(${(x * y * z) / Math.pow(this.config.cubeSize, 3) * 360}, 75%, 50%)`));
-            this.renderedSpheres[i].material.opacity = 0.6;
-            this.renderedSpheres[i].material.transparent = true;
-            i++;
+            let curSphere = this.renderedSpheres[i++];
+            curSphere.material.color.set(new T.Color(`hsl(${(x * y * z) / Math.pow(this.config.cubeSize, 3) * 360}, 75%, 50%)`));
+            curSphere.material.opacity = 0.6;
+            curSphere.material.transparent = true;
+
 
         }, this.config.cubeSize);
+
+        // modifier to slow down the update speed!
         const frameMod = 1 / 500;
-
-
 
         this.camera.position.x = (this.cubeLength + this.config.sphereRadius * this.config.sphereGap * 20) * Math.sin(f * frameMod) + this.cubeLength / 2;
         this.camera.position.y = this.cubeLength / 2
@@ -246,25 +305,24 @@ export class CubeVisualizer {
 
 
 
+        // Generate the vertices of the line using the line functions we have from earlier
+        // see this.lineEmitters
         for (var i = 0; i < this.lineEmitters.length; i++) {
             let lineExpr = this.lineEmitters[i];
-            let color = new T.Color(`hsl(${i / this.lineEmitters.length * 360}, 100%, 50%)`);
             var geometry = new Float32Array(this.config.cubeSize * 3);
 
-            var lastGeo;
-            for (let x = 0; x < this.config.cubeSize; x++) {
-                let exprV = lineExpr(x, f * frameMod * 2);
-                exprV = exprV.map(x => x / 2 + (this.config.cubeSize - 2) / 2 + 1 | 0)
+            for (let d = 0; d < this.config.cubeSize; d++) {
+                let vertexCoords = lineExpr(d, f * frameMod * 2);
+                vertexCoords = vertexCoords.map(x => x / 2 + (this.config.cubeSize - 2) / 2 + 1 | 0)
 
-                let exprG = exprV.map(x => this.config.sphereGap * 2 * x + 1);
-                let exprRad = exprG.map(x => x * this.config.sphereRadius)
-                geometry[x * 3] = exprRad[0];
-                geometry[x * 3 + 1] = exprRad[1];
-                geometry[x * 3 + 2] = exprRad[2];
+                let [x, y, z] = vertexCoords.map(x => this.config.sphereGap * 2 * x + 1).map(x => x * this.config.sphereRadius)
+                geometry[d * 3] = x;
+                geometry[d * 3 + 1] = y;
+                geometry[d * 3 + 2] = z;
 
-                let relevantSphere = this.renderedSpheres[this.config.cubeSize ** 2 * exprV[0] + exprV[1] * this.config.cubeSize + exprV[2]];
+                let relevantSphere = this.renderedSpheres[this.config.cubeSize ** 2 * vertexCoords[0] + vertexCoords[1] * this.config.cubeSize + vertexCoords[2]];
                 relevantSphere.material.color.set(
-                    new T.Color(`hsl(${(exprV[0] * exprV[1] * exprV[2]) / Math.pow(this.config.cubeSize, 3) * 360}, 100%, 50%)`));
+                    new T.Color(`hsl(${(vertexCoords[0] * vertexCoords[1] * vertexCoords[2]) / Math.pow(this.config.cubeSize, 3) * 360}, 100%, 50%)`));
                 relevantSphere.material.opacity = 1;
                 relevantSphere.material.transparent = false;
             }
@@ -273,6 +331,9 @@ export class CubeVisualizer {
             let line = new MeshLine();
             line.setGeometry(geometry, (p: number) => this.config.sphereRadius / 2);
 
+
+            // if there are already enough lines
+            // just change the geometry of an already available line (more performant)
             if (i > this.renderedLines.length - 1) {
 
                 let material = new MeshLineMaterial({
@@ -281,14 +342,15 @@ export class CubeVisualizer {
                     sizeAttenuation: !false,
                     near: this.camera.near,
                     far: this.camera.far,
-                    color,
+                    color: new T.Color(`hsl(${i / this.lineEmitters.length * 360}, 100%, 50%)`),
                     resolution: new T.Vector2(this.width, this.height)
                 });
                 let mesh = new T.Mesh(line.geometry, material);
                 this.renderedLines.push(mesh);
-                // console.log('added')
+
                 this.scene.add(mesh);
             } else {
+                // REMEMBER GC! 
                 this.renderedLines[i].geometry.dispose();
                 this.renderedLines[i].geometry = line.geometry;
             }
@@ -309,9 +371,6 @@ export class CubeVisualizer {
     }
 
     private render() {
-
-        this.update();
-
         this.renderer.clear();
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.boundRender);
