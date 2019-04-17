@@ -1,0 +1,30 @@
+{
+  "name": "cube-visualisation-component",
+  "version": "1.0.0",
+  "description": "Cube Visualization ReactJS Component",
+  "main": "index.js",
+  "repository": "https://github.com/georgePadolsey/cube-visualisation-component.git",
+  "author": "George Padolsey <2631084+georgePadolsey@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/lodash": "^4.14.123",
+    "@types/react": "^16.8.13",
+    "@types/three": "^0.103.2",
+    "lodash": "^4.17.11",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
+    "three": "^0.103.0",
+    "three.meshline": "^1.2.0",
+    "tinycolor2": "^1.4.1"
+  },
+  "types": "index.d.ts",
+  "scripts": {
+    "dev": "parcel src/index.ts --global CubeVisualizer",
+    "build": "parcel build src/index.ts --global CubeVisualizer"
+  },
+  "devDependencies": {
+    "@types/tinycolor2": "^1.4.1",
+    "parcel-bundler": "^1.12.3",
+    "typescript": "^3.4.3"
+  }
+}
