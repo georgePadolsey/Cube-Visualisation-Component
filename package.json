@@ -19,7 +19,7 @@
     "build": "npm run fix && parcel build src/index.ts --global CubeVisualizer",
     "check": "gts check",
     "clean": "gts clean",
-    "docs": "typedoc --out docs ./src/ --mode modules --entryPoint \"Visualizer\" src/index.ts ",
+    "docs": "typedoc --out docs ./src/ --mode modules --entryPoint \\\"Visualizer\\\" src/index.ts ",
     "fix": "gts fix"
   },
   "devDependencies": {
