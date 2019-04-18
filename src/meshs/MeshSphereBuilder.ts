@@ -1,7 +1,7 @@
 import Builder from 'builder-pattern';
 import * as T from 'three';
 
-class SphereBuilder {
+class MeshSphereBuilder {
   position: T.Vector3 = new T.Vector3();
 
   radius!: number;
@@ -9,8 +9,6 @@ class SphereBuilder {
   color!: T.Color;
 
   opacity = 1;
-
-  constructor() {}
 
   withX(x: number) {
     this.position.x = x;
@@ -54,7 +52,14 @@ class SphereBuilder {
       const material = new T.MeshStandardMaterial(
           {color: this.color, transparent: true, opacity: 0.6});
       const sphere = new T.Mesh(geometry, material);
-      sphere.position = this.position;
+
+      /**
+       * We are ignoring typescript error here
+       * as we all know that a 3d Vector will have 3 args
+       * but TypeScript does not :(
+       */
+      // @ts-ignore
+      sphere.position.set(...this.position.toArray());
       return sphere;
     } catch (e) {
       throw new Error('Undefined builder value: ' + e);
@@ -62,4 +67,4 @@ class SphereBuilder {
   }
 }
 
-export {SphereBuilder};
+export {MeshSphereBuilder};

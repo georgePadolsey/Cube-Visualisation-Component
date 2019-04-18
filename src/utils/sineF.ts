@@ -1,4 +1,8 @@
 import {isArray} from 'lodash';
+
+// cache math sin function as is used a lot (+ more convenient)
+const sin = Math.sin;
+
 /**
  * Returns an emitter which outputs this custom nd-sine function equivalent to:
  *
@@ -23,13 +27,13 @@ import {isArray} from 'lodash';
  * @param outsideConsts scalar | array of scalars to add outside the sine
  * parameter. If a scalar is used it repeats the value for all dimensions.
  * @param dims optional - amount of dimensions (default:3)
+ *
+ * @throws when dims < 0 OR not all arrays passed in have same length
  */
 export function sineEmitMaker(
     magn: number|number[], multX: number|number[], multT: number|number[],
     insideConsts: number|number[], outsideConsts: number|number[] = 0,
     dims = 3): (x: number, t: number) => number[] {
-  const sin = Math.sin;
-
   /**
    * If it is a constant, repeat it for all values of the array
    */
@@ -61,11 +65,11 @@ export function sineEmitMaker(
     throw new Error('You can\'t have 0 or negative dimensions!');
   }
 
-  /** Emitter Function */
+  // Emitter Function
   return (x: number[]|number, t: number) => {
     const xA = isArray(x) ? x : new Array(dims).fill(x);
     const emittedArgs = [];
-    // for each dimension - generate the sine wave
+    // for each dimension - generate the 3d sine wave
     for (let dimI = 0; dimI < dims; dimI++) {
       emittedArgs.push(
           magnA[dimI] *

@@ -1,8 +1,9 @@
 import {cloneDeep, merge, random} from 'lodash';
 import * as T from 'three';
-import {MeshLine, MeshLineMaterial} from 'three.meshline';
+import {MeshLine} from 'three.meshline';
+import {MeshLineBuilder} from './meshs/MeshLineBuilder';
 
-import {SphereBuilder} from './SphereBuilder';
+import {MeshSphereBuilder} from './meshs/MeshSphereBuilder';
 import {iterateCube} from './utils/3DIterator';
 import {sineEmitMaker} from './utils/sineF';
 import {WebGL} from './utils/WebGL';
@@ -12,14 +13,14 @@ interface CubeVisualizerConfig {
   sphereRadius: number;
   sphereGap: number;
   numberOfLines: number;
-  backgroundClear?: number;
+  backgroundClear: number;
 }
 
 const defaultCubeVisualizerConfig = {
   cubeSize: 9,
-  sphereGap: 8.5,
+  sphereGap: 8,
   sphereRadius: 5,
-  numberOfLines: 6,
+  numberOfLines: 9,
   backgroundClear: 0x000111
 };
 
@@ -32,14 +33,15 @@ function params<T>(o: T): Partial<T> {
  * lines which trace out the square randomly.
  */
 export class CubeVisualizer {
-  scene: T.Scene;
-  camera: T.PerspectiveCamera;
-  renderer: T.WebGLRenderer;
+  scene!: T.Scene;
+  camera!: T.PerspectiveCamera;
+  renderer!: T.WebGLRenderer;
 
 
 
   /** Config */
   _config: CubeVisualizerConfig = defaultCubeVisualizerConfig;
+  cubeLength!: number;
 
   set config(config: CubeVisualizerConfig) {
     this._config = config;
@@ -98,7 +100,6 @@ export class CubeVisualizer {
    */
   boundRender: (time: number) => void;
   boundUpdate: () => void;
-  cubeLength: number;
 
   /**
    * CubeVisualizer class - a framework agnostic cube visualization with sine
@@ -159,9 +160,10 @@ export class CubeVisualizer {
 
     const hasBackground = !!this.config.backgroundClear;
 
+
     // Setup Renderer and attach to container
     this.renderer =
-        new T.WebGLRenderer({antialias: true, alpha: !hasBackground});
+        new T.WebGLRenderer({antialias: false, alpha: !hasBackground});
 
     if (hasBackground) {
       this.renderer.setClearColor(this.config.backgroundClear);
@@ -209,7 +211,7 @@ export class CubeVisualizer {
     const aspectRatio = this.width / this.height;
 
     // basic camera setup
-    this.camera = new T.PerspectiveCamera(60, aspectRatio, 0.1, 2000);
+    this.camera = new T.PerspectiveCamera(60, aspectRatio, 5, 2000);
 
     // temp positioning (will be update quickly in update function)
     this.camera.position.x = -100;
@@ -225,29 +227,11 @@ export class CubeVisualizer {
    * Setup ambient light as well as a spot light
    */
   private buildLights() {
-    const light = new T.AmbientLight(0x404040);  // soft white light
+    const light = new T.AmbientLight(0x404040, 3);  // soft white light
     this.scene.add(light);
 
-
-    const spotlight = new T.SpotLight('#fff', 1);
-    spotlight.position.x = -this.cubeLength;
-    spotlight.position.z = -this.cubeLength;
-    spotlight.position.y = this.cubeLength / 2;
-
-    spotlight.angle = 0.3;
-    spotlight.decay = 0.5;
-    spotlight.penumbra = 1;
-    spotlight.shadow.camera.near = 10;
-    spotlight.shadow.camera.far = 1000;
-    spotlight.shadow.camera.fov = 30;
-
-
-    spotlight.lookAt(new T.Vector3(
-        this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
-    this.scene.add(spotlight);
-
     /**
-     * Note these lights are `not` stored in the class as instance variables
+     * Note these light is `not` stored in the class as instance variables
      * This is because they are not needed anywhere else!
      */
   }
@@ -259,7 +243,7 @@ export class CubeVisualizer {
      */
     iterateCube((x, y, z) => {
       const sphere =
-          new SphereBuilder()
+          new MeshSphereBuilder()
               .withX(
                   this.config.sphereRadius *
                   (1 + 2 * this.config.sphereGap * x))
@@ -274,6 +258,7 @@ export class CubeVisualizer {
               .withRadius(this.config.sphereRadius)
               .withEdges(8)
               .build();
+
       this.renderedSpheres.push(sphere);
       this.scene.add(sphere);
     }, this.config.cubeSize);
@@ -300,27 +285,30 @@ export class CubeVisualizer {
     // default color / opacity/ transparency
     iterateCube((x, y, z) => {
       const curSphere = this.renderedSpheres[i++];
-      curSphere.material.color.set(new T.Color(`hsl(${
-          (x * y * z) / Math.pow(this.config.cubeSize, 3) *
-          360}, 75 %, 50 %)`));
-      curSphere.material.opacity = 0.6;
-      curSphere.material.transparent = true;
+
+      const sphereMaterial = curSphere.material as T.MeshStandardMaterial;
+      sphereMaterial.color.set(new T.Color().setHSL(
+          (x * y * z) / Math.pow(this.config.cubeSize, 3), 0.75, 0.5));
+      sphereMaterial.opacity = 0.5;
+      sphereMaterial.transparent = true;
     }, this.config.cubeSize);
 
     // modifier to slow down the update speed!
-    const frameMod = 1 / 500;
+    const frameMod = 1 / 100;
 
     this.camera.position.x =
         (this.cubeLength +
          this.config.sphereRadius * this.config.sphereGap * 20) *
-            Math.sin(f * frameMod) +
-        this.cubeLength / 2;
-    this.camera.position.y = this.cubeLength / 2;
+                Math.sin(f * frameMod) +
+            this.cubeLength / 2 |
+        0;
+    this.camera.position.y = this.cubeLength / 2 | 0;
     this.camera.position.z =
         (this.cubeLength +
          this.config.sphereRadius * this.config.sphereGap * 20) *
-            Math.cos(f * frameMod) +
-        this.cubeLength / 2;
+                Math.cos(f * frameMod) +
+            this.cubeLength / 2 |
+        0;
     this.camera.lookAt(new T.Vector3(
         this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
 
@@ -330,50 +318,60 @@ export class CubeVisualizer {
     // earlier see this.lineEmitters
     for (let i = 0; i < this.lineEmitters.length; i++) {
       const lineExpr = this.lineEmitters[i];
-      const geometry = new Float32Array(this.config.cubeSize * 3);
+      const points = [];
 
       for (let d = 0; d < this.config.cubeSize; d++) {
         let vertexCoords = lineExpr(d, f * frameMod * 2);
-        vertexCoords = vertexCoords.map(
-            x => x / 2 + (this.config.cubeSize - 2) / 2 + 1 | 0);
+        vertexCoords =
+            vertexCoords.map(x => x / 2 + (this.config.cubeSize - 2) / 2 + 1);
 
-        const [x, y, z] =
-            vertexCoords.map(x => this.config.sphereGap * 2 * x + 1)
-                .map(x => x * this.config.sphereRadius);
-        geometry[d * 3] = x;
-        geometry[d * 3 + 1] = y;
-        geometry[d * 3 + 2] = z;
+        const roundedVertexCoords = vertexCoords.map(x => Math.round(x));
 
-        const relevantSphere = this.renderedSpheres[this.config.cubeSize ** 2 * vertexCoords[0] + vertexCoords[1] * this.config.cubeSize + vertexCoords[2]];
-        relevantSphere.material.color.set(new T.Color(`hsl(${
-            (vertexCoords[0] * vertexCoords[1] * vertexCoords[2]) /
-            Math.pow(this.config.cubeSize, 3) * 360}, 100%, 50 %)`));
-        relevantSphere.material.opacity = 1;
-        relevantSphere.material.transparent = false;
+        const point = new T.Vector3(
+            ...vertexCoords.map(x => this.config.sphereGap * 2 * x + 1)
+                .map(x => x * this.config.sphereRadius));
+        points.push(point);
+
+        const relevantSphere = this.renderedSpheres[this.config.cubeSize ** 2 * roundedVertexCoords[0] + roundedVertexCoords[1] * this.config.cubeSize + roundedVertexCoords[2]];
+
+        const relevantSphereMaterial =
+            relevantSphere.material as T.MeshStandardMaterial;
+        relevantSphereMaterial.color.set(this.lineEmitters[i].color);
+        relevantSphereMaterial.opacity = 1;
+        relevantSphereMaterial.transparent = false;
       }
 
+      const curve = new T.CatmullRomCurve3(points);
+
+      const acPoints = curve.getPoints(this.config.cubeSize ** 2);
+      const g = new T.Geometry();
+
+      acPoints.forEach(p => g.vertices.push(p));
+
+      // console.log(acPoints);
 
       const line = new MeshLine();
-      line.setGeometry(geometry, (p: number) => this.config.sphereRadius / 2);
+      line.setGeometry(g, (p: number) => this.config.sphereRadius * 2);
 
-
+      const genColor = new T.Color().setHSL(Math.random(), 0.8, 0.5);
       // if there are already enough lines
       // just change the geometry of an already available line (more performant)
       if (i > this.renderedLines.length - 1) {
-        const material = new MeshLineMaterial({
-          useMap: false,
-          opacity: 1,
-          sizeAttenuation: !false,
-          near: this.camera.near,
-          far: this.camera.far,
-          color: new T.Color(
-              `hsl(${i / this.lineEmitters.length * 360}, 100 %, 50 %)`),
-          resolution: new T.Vector2(this.width, this.height)
-        });
-        const mesh = new T.Mesh(line.geometry, material);
-        this.renderedLines.push(mesh);
+        const color = genColor.offsetHSL(i / this.lineEmitters.length, 0, 0);
 
-        this.scene.add(mesh);
+        const lineMesh =
+            new MeshLineBuilder()
+                .withResolution(new T.Vector2(this.width, this.height))
+                .withCamera(this.camera)
+                .withColor(color)
+                .withLineGeometry(line.geometry)
+                .build();
+
+        this.lineEmitters[i].color = color;
+
+
+        this.renderedLines.push(lineMesh);
+        this.scene.add(lineMesh);
       } else {
         // REMEMBER GC!
         this.renderedLines[i].geometry.dispose();
