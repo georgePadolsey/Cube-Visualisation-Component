@@ -15,8 +15,8 @@
   },
   "types": "index.d.ts",
   "scripts": {
-    "dev": "parcel src/index.ts --global CubeVisualizer",
-    "build": "npm run fix && parcel build src/index.ts --global CubeVisualizer",
+    "dev": "parcel src/index.ts --global CubeVisualizer -d dist --out-file CubeVisualizer.js --public-url ./",
+    "build": "npm run fix && parcel build src/index.ts -d dist --global CubeVisualizer --out-file CubeVisualizer.min.js --public-url ./",
     "check": "gts check",
     "clean": "gts clean",
     "docs": "typedoc --out docs ./src/ --mode modules --entryPoint \\\"Visualizer\\\" src/index.ts ",

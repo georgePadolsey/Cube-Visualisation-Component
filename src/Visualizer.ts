@@ -194,6 +194,7 @@ export class Visualizer {
 
     for (let i = 0; i < this.config.numberOfLines; i++) {
       // fill sine parameters with all [-1,1] floats
+      // make it the cube size -2 as we want it to miss out the most outer layer
       this.lines.push(new Line(sineEmitMaker(
           this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3))));
     }
@@ -209,7 +210,7 @@ export class Visualizer {
     // basic camera setup
     this.camera = new T.PerspectiveCamera(60, aspectRatio, 5, 5000);
 
-    // temp positioning (will be update quickly in update function)
+    // temp positioning (will be updated quickly in update function)
     this.camera.position.x = -100;
     this.camera.position.y = this.cubeLength / 2;
     this.camera.position.z = -100;
@@ -220,7 +221,7 @@ export class Visualizer {
   }
 
   /**
-   * Setup ambient light as well as a spot light
+   * Setup ambient light
    */
   private buildLights() {
     const light = new T.AmbientLight(0x404040, 3);  // soft white light
@@ -231,12 +232,11 @@ export class Visualizer {
      * This is because they are not needed anywhere else!
      */
   }
-
+  /**
+   * iterate over the entire cube coordinates (integers) and create spheres
+   * with colours depending on their position
+   */
   private buildSpheres() {
-    /**
-     * iterate over the entire cube coordinates (integers) and create spheres
-     * with colours depending on their position
-     */
     iterateCube((x, y, z) => {
       const sphere =
           new MeshSphereBuilder()
