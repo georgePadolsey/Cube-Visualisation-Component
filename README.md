@@ -5,7 +5,7 @@
 
 A simple component designed to create cool 3d sine wave in cube visualization:
 
-![Cube Visulization Demo](example_demo.gif)
+![Cube Visulization Demo](https://blog.georgep.co.uk/Cube-Visualisation-Component/example_demo.gif)
 
 
 # How to run
@@ -30,9 +30,10 @@ or in a browser:
 
 To build you can simply run: `npm run build` in the directory.
 
+
 # API 
 
-CubeVisualizer.Container(container, width, height. Optiona)
+View the full documentation at https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/
 
 
 # License
