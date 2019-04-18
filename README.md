@@ -5,8 +5,9 @@
 
 A simple component designed to create cool 3d sine wave in cube visualization:
 
-![Cube Visulization Demo](https://blog.georgep.co.uk/Cube-Visualisation-Component/example_demo.gif)
+[![Cube Visulization Demo](https://blog.georgep.co.uk/Cube-Visualisation-Component/example_demo.gif)](https://blog.georgep.co.uk/Cube-Visualisation-Component/examples/MainTest.html)
 
+### [Demo here](https://blog.georgep.co.uk/Cube-Visualisation-Component/examples/MainTest.html)
 
 # How to run
 
