@@ -53681,10 +53681,10 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var defaultCubeVisualizerConfig = {
-  cubeSize: 9,
+  cubeSize: 7,
   sphereGap: 8,
   sphereRadius: 5,
-  numberOfLines: 9,
+  numberOfLines: 6,
   backgroundClear: 0x000111
 };
 /**
@@ -53825,7 +53825,7 @@ function () {
     value: function buildCamera() {
       var aspectRatio = this.width / this.height; // basic camera setup
 
-      this.camera = new T.PerspectiveCamera(60, aspectRatio, 5, 2000); // temp positioning (will be update quickly in update function)
+      this.camera = new T.PerspectiveCamera(60, aspectRatio, 5, 5000); // temp positioning (will be update quickly in update function)
 
       this.camera.position.x = -100;
       this.camera.position.y = this.cubeLength / 2;
@@ -53859,6 +53859,7 @@ function () {
        */
       (0, _DIterator.iterateCube)(function (x, y, z) {
         var sphere = new _MeshSphereBuilder.MeshSphereBuilder().withX(_this.config.sphereRadius * (1 + 2 * _this.config.sphereGap * x)).withY(_this.config.sphereRadius * (1 + 2 * _this.config.sphereGap * y)).withZ(_this.config.sphereRadius * (1 + 2 * _this.config.sphereGap * z)).withColor(new T.Color().setHSL((x + y + z) / (_this.config.cubeSize * 3), 0.75, 0.5)).withRadius(_this.config.sphereRadius).withEdges(8).build();
+        sphere.mScale = 1;
 
         _this.renderedSpheres.push(sphere);
 
@@ -53893,9 +53894,17 @@ function () {
         sphereMaterial.color.set(new T.Color().setHSL(x * y * z / Math.pow(_this2.config.cubeSize, 3), 0.75, 0.5));
         sphereMaterial.opacity = 0.5;
         sphereMaterial.transparent = true;
+
+        if (curSphere.mScale > 1) {
+          curSphere.geometry.scale(0.99, 0.99, 0.99);
+          curSphere.mScale = 0.99 * curSphere.mScale;
+        } else if (curSphere.mScale < 1) {
+          curSphere.geometry.scale(1 / curSphere.mScale, 1 / curSphere.mScale, 1 / curSphere.mScale);
+          curSphere.mScale = 1;
+        }
       }, this.config.cubeSize); // modifier to slow down the update speed!
 
-      var frameMod = 1 / 100;
+      var frameMod = 1 / 200;
       /**
        * Update the camera position to be a circle motion
        * round the cube. Therefore x/z must have sine/ cos
@@ -53916,7 +53925,7 @@ function () {
         for (var d = 0; d < _this2.config.cubeSize; d++) {
           var vertexCoords = lineExpr(d, f * frameMod * 2);
           vertexCoords = vertexCoords.map(function (x) {
-            return x / 2 + (_this2.config.cubeSize - 2) / 2 + 1;
+            return Math.round(x / 2 + (_this2.config.cubeSize - 2) / 2 + 1);
           });
           var roundedVertexCoords = vertexCoords.map(function (x) {
             return Math.round(x);
@@ -53931,6 +53940,11 @@ function () {
           points.push(point);
 
           var relevantSphere = _this2.renderedSpheres[Math.pow(_this2.config.cubeSize, 2) * roundedVertexCoords[0] + roundedVertexCoords[1] * _this2.config.cubeSize + roundedVertexCoords[2]];
+
+          if (relevantSphere.mScale <= 1) {
+            relevantSphere.geometry.scale(3, 3, 3);
+            relevantSphere.mScale = 3;
+          }
 
           var relevantSphereMaterial = relevantSphere.material;
           relevantSphereMaterial.color.set(_this2.lines[_i].color);
@@ -53953,7 +53967,8 @@ function () {
         // just change the geometry of an already available line (more performant)
 
         if (_i > _this2.renderedLines.length - 1) {
-          var color = genColor.offsetHSL(_i / _this2.lines.length, 0, 0);
+          // console.log(i / this.lines.length)/
+          var color = new T.Color().setHSL(_i / _this2.lines.length, 0.8, 0.5);
           var lineMesh = new _MeshLineBuilder.MeshLineBuilder().withResolution(new T.Vector2(_this2.width, _this2.height)).withCamera(_this2.camera).withColor(color).withLineGeometry(line.geometry).build();
           _this2.lines[_i].color = color;
 
@@ -54068,7 +54083,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60017" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61453" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

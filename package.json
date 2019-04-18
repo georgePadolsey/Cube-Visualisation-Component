@@ -10,19 +10,16 @@
     "@types/lodash": "^4.14.123",
     "lodash": "^4.17.11",
     "three": "^0.103.0",
-    "three.meshline": "^1.2.0"
+    "three.meshline": "^1.2.0",
+    "typedoc": "^0.14.2"
   },
   "types": "index.d.ts",
   "scripts": {
     "dev": "parcel src/index.ts --global CubeVisualizer",
-    "build": "parcel build src/index.ts --global CubeVisualizer",
+    "build": "npm run fix && parcel build src/index.ts --global CubeVisualizer",
     "check": "gts check",
     "clean": "gts clean",
-    "compile": "tsc -p .",
-    "fix": "gts fix",
-    "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "fix": "gts fix"
   },
   "devDependencies": {
     "gts": "^0.9.0",

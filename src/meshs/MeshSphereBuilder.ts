@@ -1,4 +1,5 @@
 import * as T from 'three';
+import { ScalableSphereMesh } from './ScalableSphereMesh';
 
 class MeshSphereBuilder {
   position: T.Vector3 = new T.Vector3();
@@ -47,10 +48,10 @@ class MeshSphereBuilder {
   build() {
     try {
       const geometry =
-          new T.SphereGeometry(this.radius, this.edges, this.edges);
+        new T.SphereGeometry(this.radius, this.edges, this.edges);
       const material = new T.MeshStandardMaterial(
-          {color: this.color, transparent: true, opacity: 0.6});
-      const sphere = new T.Mesh(geometry, material);
+        { color: this.color, transparent: true, opacity: 0.6 });
+      const sphere = new ScalableSphereMesh(geometry, material);
 
       /**
        * We are ignoring typescript error here
@@ -66,4 +67,4 @@ class MeshSphereBuilder {
   }
 }
 
-export {MeshSphereBuilder};
+export { MeshSphereBuilder };

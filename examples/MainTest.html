@@ -12,17 +12,20 @@
             margin: 0;
             padding: 0;
             background-color: #000111;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
         }
     </style>
 </head>
 
 <body>
     <div id="root"></div>
-    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+
     <script src="../dist/index.js"></script>
     <script>
-        new CubeVisualizer.Container(document.getElementById('root'), window.innerWidth, window.innerHeight)</script>
+        new CubeVisualizer.Visualizer(document.getElementById('root'), window.innerWidth, window.innerHeight)
+    </script>
 
 </body>
 
