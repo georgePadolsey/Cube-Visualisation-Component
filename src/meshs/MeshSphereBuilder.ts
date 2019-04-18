@@ -1,6 +1,10 @@
 import * as T from 'three';
 import {ScalableSphereMesh} from './ScalableSphereMesh';
 
+
+/**
+ * Opinionated - MeshSphereBuilder
+ */
 class MeshSphereBuilder {
   position: T.Vector3 = new T.Vector3();
 

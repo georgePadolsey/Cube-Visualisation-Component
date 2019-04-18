@@ -1,6 +1,17 @@
 import * as T from 'three';
 import {MeshLineMaterial} from 'three.meshline';
 
+/**
+ * Opinionated-Builder utility class to make MeshLines
+ * from line Geometry
+ *
+ * @example ```new MeshLineBuilder()
+ *              .withResolution(res)
+ *              .withCamera(camera)
+ *              .withColor(color)
+ *              .withLineGeometry(geometry)
+ *              .build()```
+ */
 class MeshLineBuilder {
   resolution!: T.Vector2;
   camera!: T.PerspectiveCamera;

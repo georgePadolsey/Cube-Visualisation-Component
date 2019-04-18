@@ -37,7 +37,9 @@ To build the documentation you run:
 
 # API 
 
-View the [full documentation and usage here](https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/)
+View the [full documentation and usage here](https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/).
+
+There's a good amount of customisation available via the ConfigObject though feel free to copy the code.
 
 # Why
 

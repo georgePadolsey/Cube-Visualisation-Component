@@ -15,6 +15,7 @@ interface CubeVisualizerConfig {
   sphereGap: number;
   numberOfLines: number;
   backgroundClear: number;
+  radiusDecayRate: number;
 }
 
 const defaultCubeVisualizerConfig = {
@@ -22,7 +23,8 @@ const defaultCubeVisualizerConfig = {
   sphereGap: 8,
   sphereRadius: 5,
   numberOfLines: 6,
-  backgroundClear: 0x000111
+  backgroundClear: 0x000111,
+  radiusDecayRate: 0.99
 };
 /**
  * CubeVisualizer class - a framework agnostic cube visualization with sine wave
@@ -288,8 +290,11 @@ export class Visualizer {
       sphereMaterial.opacity = 0.5;
       sphereMaterial.transparent = true;
       if (curSphere.currentScale > 1) {
-        curSphere.geometry.scale(0.99, 0.99, 0.99);
-        curSphere.currentScale = 0.99 * curSphere.currentScale;
+        curSphere.geometry.scale(
+            this.config.radiusDecayRate, this.config.radiusDecayRate,
+            this.config.radiusDecayRate);
+        curSphere.currentScale =
+            this.config.radiusDecayRate * curSphere.currentScale;
       } else if (curSphere.currentScale < 1) {
         curSphere.geometry.scale(
             1 / curSphere.currentScale, 1 / curSphere.currentScale,
@@ -346,7 +351,9 @@ export class Visualizer {
                 .map(x => x * this.config.sphereRadius));
         points.push(point);
 
+        // find closest sphere
         const relevantSphere = this.renderedSpheres[this.config.cubeSize ** 2 * roundedVertexCoords[0] + roundedVertexCoords[1] * this.config.cubeSize + roundedVertexCoords[2]];
+        // if sphere is not scaled already scale it
         if (relevantSphere.currentScale <= 1) {
           relevantSphere.geometry.scale(3, 3, 3);
           relevantSphere.currentScale = 3;
