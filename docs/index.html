@@ -76,9 +76,20 @@
     <span class="hljs-keyword">new</span> CubeVisualizer.Visualizer(<span class="hljs-built_in">document</span>.body, <span class="hljs-built_in">window</span>.innerWidth, <span class="hljs-built_in">window</span>.innerHeight)
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
 				<h1 id="how-to-build">How to build</h1>
-				<p>To build you can simply run: <code>npm run build</code> in the directory.</p>
+				<p>To build you can simply run: </p>
+				<ul>
+					<li><code>npm run build</code></li>
+				</ul>
+				<p>To build the documentation you run: </p>
+				<ul>
+					<li><code>npm run docs</code></li>
+				</ul>
 				<h1 id="api">API</h1>
-				<p>View the <a href="https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/">full documentation here</a></p>
+				<p>View the <a href="https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/">full documentation and usage here</a></p>
+				<h1 id="why">Why</h1>
+				<p>Originally I built this visualization for <a href="https://www.georgep.co.uk/">my website</a> (shameless plug) as a cool background. However that relied heavily on a library called <a href="https://gitgud.io/unconed/mathbox">MathBox</a> which is, unfortunately, no longer actively developed. It is an amazing project in it&#39;s own right. Though I wanted to see if I could replicate the same effect with just <a href="https://threejs.org/">Three.JS</a>. </p>
+				<p><img src="website_example.gif" alt="Website example"></p>
+				<p>This project is not completely there yet -- it has no locking to the grid. Though currently I believe the spline between points is a good compromise. To lock to the grid it will mean walking cubically between each point. Additionally, the current project is not completely performant. I am looking currently at optimising it.</p>
 				<h1 id="license">License</h1>
 				<p>MIT - See LICENSE</p>
 			</div>

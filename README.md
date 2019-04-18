@@ -28,13 +28,24 @@ or in a browser:
 
 # How to build
 
-To build you can simply run: `npm run build` in the directory.
+To build you can simply run: 
+- `npm run build`
+
+To build the documentation you run: 
+- `npm run docs`
 
 
 # API 
 
-View the [full documentation here](https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/)
+View the [full documentation and usage here](https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/)
 
+# Why
+
+Originally I built this visualization for [my website](https://www.georgep.co.uk/) (shameless plug) as a cool background. However that relied heavily on a library called [MathBox](https://gitgud.io/unconed/mathbox) which is, unfortunately, no longer actively developed. It is an amazing project in it's own right. Though I wanted to see if I could replicate the same effect with just [Three.JS](https://threejs.org/). 
+
+![Website example](website_example.gif)
+
+This project is not completely there yet -- it has no locking to the grid. Though currently I believe the spline between points is a good compromise. To lock to the grid it will mean walking cubically between each point. Additionally, the current project is not completely performant. I am looking currently at optimising it.
 
 # License
 

@@ -1,4 +1,4 @@
 
-import { Visualizer } from './Visualizer';
+import {Visualizer} from './Visualizer';
 
-export { Visualizer };
+export {Visualizer};

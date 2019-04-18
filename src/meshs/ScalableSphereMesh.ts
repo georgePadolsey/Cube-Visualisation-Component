@@ -1,5 +1,5 @@
 import * as T from 'three';
 class ScalableSphereMesh extends T.Mesh {
-  currentScale: number = 1;
+  currentScale = 1;
 }
-export { ScalableSphereMesh }; 
+export {ScalableSphereMesh};
