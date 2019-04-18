@@ -13,13 +13,14 @@
     "three.meshline": "^1.2.0",
     "typedoc": "^0.14.2"
   },
-  "types": "index.d.ts",
+  "types": "src/Visualizer.d.ts",
   "scripts": {
     "dev": "parcel src/index.ts --global CubeVisualizer -d dist --out-file CubeVisualizer.js --public-url ./",
-    "build": "npm run fix && parcel build src/index.ts -d dist --global CubeVisualizer --out-file CubeVisualizer.min.js --public-url ./",
+    "build": "npm run fix && npm run generate-def && parcel build src/index.ts -d dist --global CubeVisualizer --out-file CubeVisualizer.min.js --public-url ./",
     "check": "gts check",
+    "generate-def": "tsc --emitDeclarationOnly -p . --declarationDir ./src",
     "clean": "gts clean",
-    "docs": "typedoc --out docs ./src/ --mode modules --entryPoint \\\"Visualizer\\\" src/index.ts ",
+    "docs": "typedoc --out docs ./src/ --mode modules --entryPoint \\\"Visualizer\\\" src/index.ts",
     "fix": "gts fix"
   },
   "devDependencies": {
