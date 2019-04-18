@@ -82,10 +82,13 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#backgroundclear" class="tsd-kind-icon">background<wbr>Clear</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#closespherescale" class="tsd-kind-icon">close<wbr>Sphere<wbr>Scale</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#cubesize" class="tsd-kind-icon">cube<wbr>Size</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#numberoflines" class="tsd-kind-icon">number<wbr>OfLines</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#radiusdecayrate" class="tsd-kind-icon">radius<wbr>Decay<wbr>Rate</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#spheregap" class="tsd-kind-icon">sphere<wbr>Gap</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#sphereradius" class="tsd-kind-icon">sphere<wbr>Radius</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_visualizer_.cubevisualizerconfig.html#timefactor" class="tsd-kind-icon">time<wbr>Factor</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,9 +102,30 @@
 					<div class="tsd-signature tsd-kind-icon">background<wbr>Clear<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/7254b1f/src/Visualizer.ts#L17">Visualizer.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L32">Visualizer.ts:32</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Background clear colour - if not defined - is transparent</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="closespherescale" class="tsd-anchor"></a>
+					<h3>close<wbr>Sphere<wbr>Scale</h3>
+					<div class="tsd-signature tsd-kind-icon">close<wbr>Sphere<wbr>Scale<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L42">Visualizer.ts:42</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Scaling radius of the active sphere.
+							Active spheres are ones close to lines</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 					<a name="cubesize" class="tsd-anchor"></a>
@@ -109,9 +133,14 @@
 					<div class="tsd-signature tsd-kind-icon">cube<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/7254b1f/src/Visualizer.ts#L13">Visualizer.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L16">Visualizer.ts:16</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Controls length of cube (amount of spheres that make it up)</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 					<a name="numberoflines" class="tsd-anchor"></a>
@@ -119,9 +148,30 @@
 					<div class="tsd-signature tsd-kind-icon">number<wbr>OfLines<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/7254b1f/src/Visualizer.ts#L16">Visualizer.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L28">Visualizer.ts:28</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Amount of moving sine lines</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="radiusdecayrate" class="tsd-anchor"></a>
+					<h3>radius<wbr>Decay<wbr>Rate</h3>
+					<div class="tsd-signature tsd-kind-icon">radius<wbr>Decay<wbr>Rate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L37">Visualizer.ts:37</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The decay rate of the active spheres scale
+							Active spheres are ones close to lines</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 					<a name="spheregap" class="tsd-anchor"></a>
@@ -129,9 +179,14 @@
 					<div class="tsd-signature tsd-kind-icon">sphere<wbr>Gap<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/7254b1f/src/Visualizer.ts#L15">Visualizer.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L24">Visualizer.ts:24</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Gap between spheres in terms of gap radius</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 					<a name="sphereradius" class="tsd-anchor"></a>
@@ -139,9 +194,30 @@
 					<div class="tsd-signature tsd-kind-icon">sphere<wbr>Radius<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/7254b1f/src/Visualizer.ts#L14">Visualizer.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L20">Visualizer.ts:20</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Controls radius of spheres</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="timefactor" class="tsd-anchor"></a>
+					<h3>time<wbr>Factor</h3>
+					<div class="tsd-signature tsd-kind-icon">time<wbr>Factor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/georgePadolsey/cube-visualisation-component/blob/5da0f1d/src/Visualizer.ts#L47">Visualizer.ts:47</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The factor which time is multiplied by
+							(So like sin(factor * time))</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -167,16 +243,25 @@
 								<a href="_visualizer_.cubevisualizerconfig.html#backgroundclear" class="tsd-kind-icon">background<wbr>Clear</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_visualizer_.cubevisualizerconfig.html#closespherescale" class="tsd-kind-icon">close<wbr>Sphere<wbr>Scale</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 								<a href="_visualizer_.cubevisualizerconfig.html#cubesize" class="tsd-kind-icon">cube<wbr>Size</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 								<a href="_visualizer_.cubevisualizerconfig.html#numberoflines" class="tsd-kind-icon">number<wbr>OfLines</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_visualizer_.cubevisualizerconfig.html#radiusdecayrate" class="tsd-kind-icon">radius<wbr>Decay<wbr>Rate</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 								<a href="_visualizer_.cubevisualizerconfig.html#spheregap" class="tsd-kind-icon">sphere<wbr>Gap</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
 								<a href="_visualizer_.cubevisualizerconfig.html#sphereradius" class="tsd-kind-icon">sphere<wbr>Radius</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_visualizer_.cubevisualizerconfig.html#timefactor" class="tsd-kind-icon">time<wbr>Factor</a>
 							</li>
 						</ul>
 					</li>

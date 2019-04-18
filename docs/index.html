@@ -85,11 +85,16 @@
 					<li><code>npm run docs</code></li>
 				</ul>
 				<h1 id="api">API</h1>
-				<p>View the <a href="https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/">full documentation and usage here</a></p>
+				<p>View the <a href="https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/">full documentation and usage here</a>.</p>
+				<p>There&#39;s a good amount of customisation available via the ConfigObject though feel free to copy the code.</p>
 				<h1 id="why">Why</h1>
 				<p>Originally I built this visualization for <a href="https://www.georgep.co.uk/">my website</a> (shameless plug) as a cool background. However that relied heavily on a library called <a href="https://gitgud.io/unconed/mathbox">MathBox</a> which is, unfortunately, no longer actively developed. It is an amazing project in it&#39;s own right. Though I wanted to see if I could replicate the same effect with just <a href="https://threejs.org/">Three.JS</a>. </p>
 				<p><img src="website_example.gif" alt="Website example"></p>
 				<p>This project is not completely there yet -- it has no locking to the grid. Though currently I believe the spline between points is a good compromise. To lock to the grid it will mean walking cubically between each point. Additionally, the current project is not completely performant. I am looking currently at optimising it.</p>
+				<h1 id="testing">Testing</h1>
+				<p>Since this is a visualization meant to create a nice visual it doesn&#39;t have many parts which can be tested. It doesn&#39;t have to be mathematically accurate, it just has to make a nice looking output. Though, it does need to bind itself to the page correctly. </p>
+				<p>This can be tested all by simply running the MainTest example and seeing that it performs a suitable output.</p>
+				<p>If this project is further complicated and generalised, it might be worth adding a testing framework.</p>
 				<h1 id="license">License</h1>
 				<p>MIT - See LICENSE</p>
 			</div>
