@@ -33,7 +33,7 @@ To build you can simply run: `npm run build` in the directory.
 
 # API 
 
-View the full documentation at https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/
+View the [full documentation here](https://blog.georgep.co.uk/Cube-Visualisation-Component/docs/)
 
 
 # License
