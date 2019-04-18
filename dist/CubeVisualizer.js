@@ -53295,6 +53295,17 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+/**
+ * Opinionated-Builder utility class to make MeshLines
+ * from line Geometry
+ *
+ * @example ```new MeshLineBuilder()
+ *              .withResolution(res)
+ *              .withCamera(camera)
+ *              .withColor(color)
+ *              .withLineGeometry(geometry)
+ *              .build()```
+ */
 var MeshLineBuilder =
 /*#__PURE__*/
 function () {
@@ -53373,6 +53384,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+/**
+ * Normal sphere mesh (or general mesh) which has a sclaring variable
+ */
 var ScalableSphereMesh =
 /*#__PURE__*/
 function (_T$Mesh) {
@@ -53420,6 +53434,9 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+/**
+ * Opinionated - MeshSphereBuilder
+ */
 var MeshSphereBuilder =
 /*#__PURE__*/
 function () {
@@ -53530,7 +53547,7 @@ function iterateCube(expr, length) {
     }
   }
 }
-},{}],"utils/sineF.ts":[function(require,module,exports) {
+},{}],"utils/sineEmitMaker.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53701,7 +53718,7 @@ var _MeshSphereBuilder = require("~meshs/MeshSphereBuilder");
 
 var _DIterator = require("~utils/3DIterator");
 
-var _sineF = require("~utils/sineF");
+var _sineEmitMaker = require("~utils/sineEmitMaker");
 
 var _WebGL = require("~utils/WebGL");
 
@@ -53732,7 +53749,10 @@ var defaultCubeVisualizerConfig = {
   sphereGap: 8,
   sphereRadius: 5,
   numberOfLines: 6,
-  backgroundClear: 0x000111
+  backgroundClear: 0x000111,
+  closeSphereScale: 3,
+  radiusDecayRate: 0.99,
+  timeFactor: 1 / 200
 };
 /**
  * CubeVisualizer class - a framework agnostic cube visualization with sine wave
@@ -53860,7 +53880,7 @@ function () {
       for (var i = 0; i < this.config.numberOfLines; i++) {
         // fill sine parameters with all [-1,1] floats
         // make it the cube size -2 as we want it to miss out the most outer layer
-        this.lines.push(new _Line.Line((0, _sineF.sineEmitMaker)(this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3))));
+        this.lines.push(new _Line.Line((0, _sineEmitMaker.sineEmitMaker)(this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3))));
       }
     }
     /**
@@ -53933,7 +53953,7 @@ function () {
 
       this.frame++;
       var f = this.frame;
-      var i = 0; // reset all spheres (particurly those that have been changed) back to
+      var i = 0; // reset all spheres (particularly those that have been changed) back to
       // default color / opacity/ transparency
 
       (0, _DIterator.iterateCube)(function (x, y, z) {
@@ -53942,17 +53962,22 @@ function () {
         sphereMaterial.color.set(new T.Color().setHSL(x * y * z / Math.pow(_this2.config.cubeSize, 3), 0.75, 0.5));
         sphereMaterial.opacity = 0.5;
         sphereMaterial.transparent = true;
+        var scalar;
 
         if (curSphere.currentScale > 1) {
-          curSphere.geometry.scale(0.99, 0.99, 0.99);
-          curSphere.currentScale = 0.99 * curSphere.currentScale;
+          // decay sphere size
+          scalar = _this2.config.radiusDecayRate;
+          curSphere.geometry.scale(scalar, scalar, scalar);
+          curSphere.currentScale *= scalar;
         } else if (curSphere.currentScale < 1) {
-          curSphere.geometry.scale(1 / curSphere.currentScale, 1 / curSphere.currentScale, 1 / curSphere.currentScale);
-          curSphere.currentScale = 1;
+          // if too small - scale it back up
+          scalar = 1 / curSphere.currentScale;
+          curSphere.geometry.scale(scalar, scalar, scalar);
+          curSphere.currentScale *= scalar;
         }
       }, this.config.cubeSize); // modifier to slow down the update speed!
 
-      var frameMod = 1 / 200;
+      var frameMod = this.config.timeFactor;
       /**
        * Update the camera position to be a circle motion
        * round the cube. Therefore x/z must have sine/ cos
@@ -53985,13 +54010,14 @@ function () {
             return x * _this2.config.sphereRadius;
           })));
 
-          points.push(point);
+          points.push(point); // find closest sphere
 
-          var relevantSphere = _this2.renderedSpheres[Math.pow(_this2.config.cubeSize, 2) * roundedVertexCoords[0] + roundedVertexCoords[1] * _this2.config.cubeSize + roundedVertexCoords[2]];
+          var relevantSphere = _this2.renderedSpheres[Math.pow(_this2.config.cubeSize, 2) * roundedVertexCoords[0] + roundedVertexCoords[1] * _this2.config.cubeSize + roundedVertexCoords[2]]; // if sphere is not scaled already scale it
+
 
           if (relevantSphere.currentScale <= 1) {
-            relevantSphere.geometry.scale(3, 3, 3);
-            relevantSphere.currentScale = 3;
+            relevantSphere.geometry.scale(_this2.config.closeSphereScale, _this2.config.closeSphereScale, _this2.config.closeSphereScale);
+            relevantSphere.currentScale = _this2.config.closeSphereScale;
           }
 
           var relevantSphereMaterial = relevantSphere.material;
@@ -54005,8 +54031,7 @@ function () {
         var g = new T.Geometry();
         acPoints.forEach(function (p) {
           return g.vertices.push(p);
-        }); // console.log(acPoints);
-
+        });
         var line = new _three2.MeshLine();
         line.setGeometry(g, function (p) {
           return _this2.config.sphereRadius * 2;
@@ -54015,7 +54040,6 @@ function () {
         // just change the geometry of an already available line (more performant)
 
         if (_i > _this2.renderedLines.length - 1) {
-          // console.log(i / this.lines.length)/
           var color = new T.Color().setHSL(_i / _this2.lines.length, 0.8, 0.5);
           var lineMesh = new _MeshLineBuilder.MeshLineBuilder().withResolution(new T.Vector2(_this2.width, _this2.height)).withCamera(_this2.camera).withColor(color).withLineGeometry(line.geometry).build();
           _this2.lines[_i].color = color;
@@ -54089,7 +54113,7 @@ function () {
 }();
 
 exports.Visualizer = Visualizer;
-},{"lodash":"../node_modules/lodash/lodash.js","three":"../node_modules/three/build/three.module.js","three.meshline":"../node_modules/three.meshline/src/THREE.MeshLine.js","~Line":"Line.ts","~meshs/MeshLineBuilder":"meshs/MeshLineBuilder.ts","~meshs/MeshSphereBuilder":"meshs/MeshSphereBuilder.ts","~utils/3DIterator":"utils/3DIterator.ts","~utils/sineF":"utils/sineF.ts","~utils/WebGL":"utils/WebGL.ts"}],"index.ts":[function(require,module,exports) {
+},{"lodash":"../node_modules/lodash/lodash.js","three":"../node_modules/three/build/three.module.js","three.meshline":"../node_modules/three.meshline/src/THREE.MeshLine.js","~Line":"Line.ts","~meshs/MeshLineBuilder":"meshs/MeshLineBuilder.ts","~meshs/MeshSphereBuilder":"meshs/MeshSphereBuilder.ts","~utils/3DIterator":"utils/3DIterator.ts","~utils/sineEmitMaker":"utils/sineEmitMaker.ts","~utils/WebGL":"utils/WebGL.ts"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54131,7 +54155,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55001" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55037" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

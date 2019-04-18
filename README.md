@@ -49,6 +49,15 @@ Originally I built this visualization for [my website](https://www.georgep.co.uk
 
 This project is not completely there yet -- it has no locking to the grid. Though currently I believe the spline between points is a good compromise. To lock to the grid it will mean walking cubically between each point. Additionally, the current project is not completely performant. I am looking currently at optimising it.
 
+# Testing
+
+Since this is a visualization meant to create a nice visual it doesn't have many parts which can be tested. It doesn't have to be mathematically accurate, it just has to make a nice looking output. Though, it does need to bind itself to the page correctly. 
+
+This can be tested all by simply running the MainTest example and seeing that it performs a suitable output.
+
+If this project is further complicated and generalised, it might be worth adding a testing framework.
+
+
 # License
 
 MIT - See LICENSE
