@@ -47,9 +47,9 @@ class MeshSphereBuilder {
   build() {
     try {
       const geometry =
-        new T.SphereGeometry(this.radius, this.edges, this.edges);
+          new T.SphereGeometry(this.radius, this.edges, this.edges);
       const material = new T.MeshStandardMaterial(
-        { color: this.color, transparent: true, opacity: 0.6 });
+          {color: this.color, transparent: true, opacity: 0.6});
       const sphere = new T.Mesh(geometry, material);
 
       /**
@@ -66,4 +66,4 @@ class MeshSphereBuilder {
   }
 }
 
-export { MeshSphereBuilder };
+export {MeshSphereBuilder};

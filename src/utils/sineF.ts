@@ -1,8 +1,10 @@
 import {isArray} from 'lodash';
-
 // cache math sin function as is used a lot (+ more convenient)
 const sin = Math.sin;
 
+export interface LineEmitter {
+  (x: number, t: number): number[];
+}
 /**
  * Returns an emitter which outputs this custom nd-sine function equivalent to:
  *
@@ -33,7 +35,7 @@ const sin = Math.sin;
 export function sineEmitMaker(
     magn: number|number[], multX: number|number[], multT: number|number[],
     insideConsts: number|number[], outsideConsts: number|number[] = 0,
-    dims = 3): (x: number, t: number) => number[] {
+    dims = 3): LineEmitter {
   /**
    * If it is a constant, repeat it for all values of the array
    */

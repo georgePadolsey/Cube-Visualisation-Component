@@ -1,12 +1,12 @@
 import {cloneDeep, merge, random} from 'lodash';
 import * as T from 'three';
 import {MeshLine} from 'three.meshline';
-import {MeshLineBuilder} from './meshs/MeshLineBuilder';
-
-import {MeshSphereBuilder} from './meshs/MeshSphereBuilder';
-import {iterateCube} from './utils/3DIterator';
-import {sineEmitMaker} from './utils/sineF';
-import {WebGL} from './utils/WebGL';
+import {Line} from '~Line';
+import {MeshLineBuilder} from '~meshs/MeshLineBuilder';
+import {MeshSphereBuilder} from '~meshs/MeshSphereBuilder';
+import {iterateCube} from '~utils/3DIterator';
+import {sineEmitMaker} from '~utils/sineF';
+import {WebGL} from '~utils/WebGL';
 
 interface CubeVisualizerConfig {
   cubeSize: number;
@@ -23,11 +23,6 @@ const defaultCubeVisualizerConfig = {
   numberOfLines: 9,
   backgroundClear: 0x000111
 };
-
-function params<T>(o: T): Partial<T> {
-  return o;
-}
-
 /**
  * CubeVisualizer class - a framework agnostic cube visualization with sine wave
  * lines which trace out the square randomly.
@@ -58,7 +53,7 @@ export class CubeVisualizer {
    * functions which emit the x,y,z verticies of the line
    *  from a displacement value(x) and time value(t)
    */
-  lineEmitters: Array<(x: number, t: number) => number[]> = [];
+  lines: Line[] = [];
 
   /**
    * Rendered objects
@@ -198,8 +193,8 @@ export class CubeVisualizer {
 
     for (let i = 0; i < this.config.numberOfLines; i++) {
       // fill sine parameters with all [-1,1] floats
-      this.lineEmitters.push(sineEmitMaker(
-          this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3)));
+      this.lines.push(new Line(sineEmitMaker(
+          this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3))));
     }
   }
 
@@ -296,6 +291,13 @@ export class CubeVisualizer {
     // modifier to slow down the update speed!
     const frameMod = 1 / 100;
 
+
+
+    /**
+     * Update the camera position to be a circle motion
+     * round the cube. Therefore x/z must have sine/ cos
+     * y stays stationary at the middle of the cube
+     */
     this.camera.position.x =
         (this.cubeLength +
          this.config.sphereRadius * this.config.sphereGap * 20) *
@@ -309,15 +311,17 @@ export class CubeVisualizer {
                 Math.cos(f * frameMod) +
             this.cubeLength / 2 |
         0;
+
+    // always look at middle of cube
     this.camera.lookAt(new T.Vector3(
         this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2));
 
 
 
     // Generate the vertices of the line using the line functions we have from
-    // earlier see this.lineEmitters
-    for (let i = 0; i < this.lineEmitters.length; i++) {
-      const lineExpr = this.lineEmitters[i];
+    // earlier see this.lines
+    for (let i = 0; i < this.lines.length; i++) {
+      const lineExpr = this.lines[i].emitter;
       const points = [];
 
       for (let d = 0; d < this.config.cubeSize; d++) {
@@ -336,7 +340,7 @@ export class CubeVisualizer {
 
         const relevantSphereMaterial =
             relevantSphere.material as T.MeshStandardMaterial;
-        relevantSphereMaterial.color.set(this.lineEmitters[i].color);
+        relevantSphereMaterial.color.set(this.lines[i].color);
         relevantSphereMaterial.opacity = 1;
         relevantSphereMaterial.transparent = false;
       }
@@ -357,7 +361,7 @@ export class CubeVisualizer {
       // if there are already enough lines
       // just change the geometry of an already available line (more performant)
       if (i > this.renderedLines.length - 1) {
-        const color = genColor.offsetHSL(i / this.lineEmitters.length, 0, 0);
+        const color = genColor.offsetHSL(i / this.lines.length, 0, 0);
 
         const lineMesh =
             new MeshLineBuilder()
@@ -367,7 +371,7 @@ export class CubeVisualizer {
                 .withLineGeometry(line.geometry)
                 .build();
 
-        this.lineEmitters[i].color = color;
+        this.lines[i].color = color;
 
 
         this.renderedLines.push(lineMesh);

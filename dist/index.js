@@ -53246,6 +53246,35 @@ else {
 
 }).call(this);
 
+},{"three":"../node_modules/three/build/three.module.js"}],"Line.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Line = void 0;
+
+var T = _interopRequireWildcard(require("three"));
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Container object for a line function with color
+ */
+var Line = function Line(emitter, color) {
+  _classCallCheck(this, Line);
+
+  this.color = new T.Color('white');
+  this.emitter = emitter;
+
+  if (color) {
+    this.color = color;
+  }
+};
+
+exports.Line = Line;
 },{"three":"../node_modules/three/build/three.module.js"}],"meshs/MeshLineBuilder.ts":[function(require,module,exports) {
 "use strict";
 
@@ -53617,15 +53646,17 @@ var T = _interopRequireWildcard(require("three"));
 
 var _three2 = require("three.meshline");
 
-var _MeshLineBuilder = require("./meshs/MeshLineBuilder");
+var _Line = require("~Line");
 
-var _MeshSphereBuilder = require("./meshs/MeshSphereBuilder");
+var _MeshLineBuilder = require("~meshs/MeshLineBuilder");
 
-var _DIterator = require("./utils/3DIterator");
+var _MeshSphereBuilder = require("~meshs/MeshSphereBuilder");
 
-var _sineF = require("./utils/sineF");
+var _DIterator = require("~utils/3DIterator");
 
-var _WebGL = require("./utils/WebGL");
+var _sineF = require("~utils/sineF");
+
+var _WebGL = require("~utils/WebGL");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -53656,15 +53687,10 @@ var defaultCubeVisualizerConfig = {
   numberOfLines: 9,
   backgroundClear: 0x000111
 };
-
-function params(o) {
-  return o;
-}
 /**
  * CubeVisualizer class - a framework agnostic cube visualization with sine wave
  * lines which trace out the square randomly.
  */
-
 
 var CubeVisualizer =
 /*#__PURE__*/
@@ -53694,7 +53720,7 @@ function () {
      *  from a displacement value(x) and time value(t)
      */
 
-    this.lineEmitters = [];
+    this.lines = [];
     /**
      * Rendered objects
      */
@@ -53786,7 +53812,7 @@ function () {
 
       for (var i = 0; i < this.config.numberOfLines; i++) {
         // fill sine parameters with all [-1,1] floats
-        this.lineEmitters.push((0, _sineF.sineEmitMaker)(this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3)));
+        this.lines.push(new _Line.Line((0, _sineF.sineEmitMaker)(this.config.cubeSize - 2, randIdent(3), randIdent(3), randIdent(3))));
       }
     }
     /**
@@ -53870,14 +53896,21 @@ function () {
       }, this.config.cubeSize); // modifier to slow down the update speed!
 
       var frameMod = 1 / 100;
+      /**
+       * Update the camera position to be a circle motion
+       * round the cube. Therefore x/z must have sine/ cos
+       * y stays stationary at the middle of the cube
+       */
+
       this.camera.position.x = (this.cubeLength + this.config.sphereRadius * this.config.sphereGap * 20) * Math.sin(f * frameMod) + this.cubeLength / 2 | 0;
       this.camera.position.y = this.cubeLength / 2 | 0;
-      this.camera.position.z = (this.cubeLength + this.config.sphereRadius * this.config.sphereGap * 20) * Math.cos(f * frameMod) + this.cubeLength / 2 | 0;
+      this.camera.position.z = (this.cubeLength + this.config.sphereRadius * this.config.sphereGap * 20) * Math.cos(f * frameMod) + this.cubeLength / 2 | 0; // always look at middle of cube
+
       this.camera.lookAt(new T.Vector3(this.cubeLength / 2, this.cubeLength / 2, this.cubeLength / 2)); // Generate the vertices of the line using the line functions we have from
-      // earlier see this.lineEmitters
+      // earlier see this.lines
 
       var _loop = function _loop(_i) {
-        var lineExpr = _this2.lineEmitters[_i];
+        var lineExpr = _this2.lines[_i].emitter;
         var points = [];
 
         for (var d = 0; d < _this2.config.cubeSize; d++) {
@@ -53900,7 +53933,7 @@ function () {
           var relevantSphere = _this2.renderedSpheres[Math.pow(_this2.config.cubeSize, 2) * roundedVertexCoords[0] + roundedVertexCoords[1] * _this2.config.cubeSize + roundedVertexCoords[2]];
 
           var relevantSphereMaterial = relevantSphere.material;
-          relevantSphereMaterial.color.set(_this2.lineEmitters[_i].color);
+          relevantSphereMaterial.color.set(_this2.lines[_i].color);
           relevantSphereMaterial.opacity = 1;
           relevantSphereMaterial.transparent = false;
         }
@@ -53920,9 +53953,9 @@ function () {
         // just change the geometry of an already available line (more performant)
 
         if (_i > _this2.renderedLines.length - 1) {
-          var color = genColor.offsetHSL(_i / _this2.lineEmitters.length, 0, 0);
+          var color = genColor.offsetHSL(_i / _this2.lines.length, 0, 0);
           var lineMesh = new _MeshLineBuilder.MeshLineBuilder().withResolution(new T.Vector2(_this2.width, _this2.height)).withCamera(_this2.camera).withColor(color).withLineGeometry(line.geometry).build();
-          _this2.lineEmitters[_i].color = color;
+          _this2.lines[_i].color = color;
 
           _this2.renderedLines.push(lineMesh);
 
@@ -53935,7 +53968,7 @@ function () {
         }
       };
 
-      for (var _i = 0; _i < this.lineEmitters.length; _i++) {
+      for (var _i = 0; _i < this.lines.length; _i++) {
         _loop(_i);
       }
     }
@@ -53993,7 +54026,7 @@ function () {
 }();
 
 exports.CubeVisualizer = CubeVisualizer;
-},{"lodash":"../node_modules/lodash/lodash.js","three":"../node_modules/three/build/three.module.js","three.meshline":"../node_modules/three.meshline/src/THREE.MeshLine.js","./meshs/MeshLineBuilder":"meshs/MeshLineBuilder.ts","./meshs/MeshSphereBuilder":"meshs/MeshSphereBuilder.ts","./utils/3DIterator":"utils/3DIterator.ts","./utils/sineF":"utils/sineF.ts","./utils/WebGL":"utils/WebGL.ts"}],"index.ts":[function(require,module,exports) {
+},{"lodash":"../node_modules/lodash/lodash.js","three":"../node_modules/three/build/three.module.js","three.meshline":"../node_modules/three.meshline/src/THREE.MeshLine.js","~Line":"Line.ts","~meshs/MeshLineBuilder":"meshs/MeshLineBuilder.ts","~meshs/MeshSphereBuilder":"meshs/MeshSphereBuilder.ts","~utils/3DIterator":"utils/3DIterator.ts","~utils/sineF":"utils/sineF.ts","~utils/WebGL":"utils/WebGL.ts"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54035,7 +54068,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59706" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60017" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
